@@ -8,14 +8,14 @@ import requests
 # ===============================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-DIFF_THRESHOLD = 1.0  # 수동 조회는 1% 이상 표시
-COMMON_FILE = "tradable_coins.json"
+DIFF_THRESHOLD = 0.5  # 수동 조회는 1% 이상 표시
+COMMON_FILE = "common_coins.json"
 
 
 # ===============================
-# 공통 코인 + 입출금 가능 코인 하루 1회 갱신
+# 공통 코인 하루 1회 갱신 (입출금 체크 없음)
 # ===============================
-def update_tradable_coins():
+def update_common_coins():
     # 업비트
     upbit = requests.get("https://api.upbit.com/v1/market/all", timeout=10).json()
     upbit_coins = {m["market"].replace("KRW-", "") for m in upbit if m["market"].startswith("KRW-")}
@@ -24,29 +24,22 @@ def update_tradable_coins():
     bithumb = requests.get("https://api.bithumb.com/public/ticker/ALL_KRW", timeout=10).json()
     bithumb_coins = set(bithumb["data"].keys()) - {"date"}
 
-    common = upbit_coins & bithumb_coins
-
-    # 업비트 지갑 상태
-    wallet = requests.get("https://api.upbit.com/v1/status/wallet", timeout=10).json()
-    wallet_data = wallet.get("data", [])
-    wallet_map = {c.get("currency"): (c.get("deposit_state")=="ACTIVE" and c.get("withdraw_state")=="ACTIVE") for c in wallet_data}
-
-    tradable = sorted([c for c in common if wallet_map.get(c)])
+    common = sorted(list(upbit_coins & bithumb_coins))
 
     with open(COMMON_FILE, "w") as f:
-        json.dump({"date": datetime.date.today().isoformat(), "coins": tradable}, f)
+        json.dump({"date": datetime.date.today().isoformat(), "coins": common}, f)
 
-    print(f"[INFO] 입출금 가능 공통 코인 {len(tradable)}개 저장")
+    print(f"[INFO] 공통 코인 {len(common)}개 저장")
 
 
-def load_tradable_coins():
+def load_common_coins():
     today = datetime.date.today().isoformat()
     if not os.path.exists(COMMON_FILE):
-        update_tradable_coins()
+        update_common_coins()
     with open(COMMON_FILE, "r") as f:
         data = json.load(f)
     if data["date"] != today:
-        update_tradable_coins()
+        update_common_coins()
         with open(COMMON_FILE, "r") as f:
             data = json.load(f)
     return data["coins"]
@@ -76,7 +69,7 @@ def send_telegram(msg):
 # 수동 조회 로직
 # ===============================
 def get_all_diffs():
-    coins = load_tradable_coins()
+    coins = load_common_coins()
     diffs = []
     for symbol in coins:
         try:
@@ -113,4 +106,4 @@ def send_query_result():
 # 실행
 # ===============================
 if __name__ == "__main__":
-    send_query_result()  # 깃허브 액션에서 누르면 바로 조회
+    send_query_result()  # 깃허브 액션에서 실행하면 바로 조회
