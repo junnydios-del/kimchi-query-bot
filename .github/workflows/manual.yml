@@ -1,7 +1,7 @@
-name: Manual Price Check
+name: Manual Coin Query
 
 on:
-  workflow_dispatch:   # 버튼 실행
+  workflow_dispatch:
 
 jobs:
   run-manual:
@@ -9,19 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          pip install requests
+      - run: pip install requests
 
-      - name: Run bot
+      - name: Run manual bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python bot_manual.py
-      
-    
