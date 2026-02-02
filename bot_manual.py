@@ -19,7 +19,7 @@ COINS = [
     "AQT", "BERA", "AKT", "KAITO", "CBK", "TRX", "STO",
     "AVNT", "MET2", "SOMI", "BREV", "ME", "OPEN", "SUPER",
     "TAIKO", "SAFE", "XPL", "ZKP", "ZBT", "ONG",
-    "WCT", "ZETA"
+    "WCT", "ZETA" , "POKT"
 ]
 
 MAX_WORKERS = 10
