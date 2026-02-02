@@ -3,25 +3,26 @@ import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ===============================
-# 환경변수
+# 텔레그램 설정 (기존과 동일)
 # ===============================
-BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-MAX_WORKERS = 10
+if not BOT_TOKEN or not CHAT_ID:
+    raise ValueError("BOT_TOKEN 또는 CHAT_ID 환경변수가 없습니다.")
 
 # ===============================
-# 수동 코인 목록 (여기에 다 박음)
+# 수동 조회할 코인 목록 (30개)
 # ===============================
 COINS = [
     "FLUID", "AXS", "IP", "ENSO", "USDC", "USDT", "BARD", "TOKAMAK",
-    "AQT", "BERA", "AKT", "KAITO", "CBK", "TRX", "STO", "AVNT",
-    "MET2", "SOMI", "BREV", "ME", "OPEN", "SUPER", "TAIKO", "SAFE",
-    "XPL", "ZKP", "ZBT", "ONG", "WCT", "ZETA", "IN", "ARDR",
-    "CHZ", "SENT", "YGG", "MOC", "ZK", "DEEP", "ZORA", "MOVE",
-    "CPOOL", "BLUR", "BOUNTY", "STRAX", "PLUME", "SOPH", "META",
-    "NOM", "LINEA", "BLAST"
+    "AQT", "BERA", "AKT", "KAITO", "CBK", "TRX", "STO",
+    "AVNT", "MET2", "SOMI", "BREV", "ME", "OPEN", "SUPER",
+    "TAIKO", "SAFE", "XPL", "ZKP", "ZBT", "ONG",
+    "WCT", "ZETA"
 ]
+
+MAX_WORKERS = 10
 
 # ===============================
 # 가격 조회
@@ -49,12 +50,12 @@ def compare_coin(symbol):
         bt = get_bithumb(symbol)
         diff = ((up - bt) / bt) * 100
         return symbol, diff, up, bt
-    except Exception:
+    except:
         return None
 
 
 # ===============================
-# 텔레그램
+# 텔레그램 전송
 # ===============================
 def send_telegram(msg):
     requests.post(
@@ -65,7 +66,7 @@ def send_telegram(msg):
 
 
 # ===============================
-# 수동 조회
+# 수동 조회 실행
 # ===============================
 def manual_check():
     results = []
@@ -85,17 +86,17 @@ def manual_check():
     # 가격차 기준 정렬
     results.sort(key=lambda x: x[1], reverse=True)
 
-    top = results[:7]
-    bottom = results[-7:][::-1]
+    upbit_high = [r for r in results if r[1] > 0][:7]
+    bithumb_high = [r for r in results if r[1] < 0][-7:][::-1]
 
-    msg = "📊 업비트 ↔ 빗썸 가격차이 (수동)\n\n"
+    msg = "📊 업비트 ↔ 빗썸 가격차이 (수동 조회)\n\n"
 
     msg += "📈 업비트가 더 비싼 TOP 7\n"
-    for c, d, up, bt in top:
+    for c, d, up, bt in upbit_high:
         msg += f"{c} | {d:.2f}% | 업 {up:,} / 빗 {bt:,}\n"
 
-    msg += "\n📉 빗썸이 더 비싼 BOTTOM 7\n"
-    for c, d, up, bt in bottom:
+    msg += "\n📉 빗썸이 더 비싼 TOP 7\n"
+    for c, d, up, bt in bithumb_high:
         msg += f"{c} | {d:.2f}% | 업 {up:,} / 빗 {bt:,}\n"
 
     send_telegram(msg)
