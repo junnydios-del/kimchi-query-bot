@@ -1,11 +1,11 @@
-name: Manual Coin Query
+name: Manual  Query
 
 on:
   workflow_dispatch:
 
 jobs:
   run-manual:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
