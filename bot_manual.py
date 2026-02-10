@@ -15,14 +15,37 @@ if not BOT_TOKEN or not CHAT_ID:
 # 수동 조회할 코인 목록 (30개)
 # ===============================
 COINS = [
-    "FLUID", "AXS", "IP", "ENSO", "USDC", "USDT", "BARD", "TOKAMAK",
-    "AQT", "BERA", "AKT", "KAITO", "CBK", "TRX", "STO",
-    "AVNT", "MET2", "SOMI", "BREV", "ME", "OPEN", "SUPER",
-    "TAIKO", "SAFE", "XPL", "ZKP", "ZBT", "ONG",
-    "WCT", "ZETA" , "POKT"
-]
+    # 메이저 / 스테이블
+    "USDT", "USDC",
 
-MAX_WORKERS = 10
+    # 상단에 언급된 코인들
+    "FLUID", "ZRO", "VANA", "AXS", "ENSO", "IP",
+    "BARD", "ORCA", "TON",
+
+    # 추천/중형
+    "AQT", "BERA", "AKT", "KAITO", "TRX", "CBK",
+    "JTO", "LA", "MET", "AVNT", "RED",
+
+    # 중소형
+    "SOMI", "OPEN", "BREV", "CTC", "ME",
+    "SUPER", "TAIKO", "ZKP", "SAFE", "XPL",
+    "ZBT",
+
+    # 소형
+    "ONG", "IN", "KERNEL", "WCT", "KAIA",
+    "ZETA", "ARDR", "PYTH", "YGG", "CHZ", "MOC",
+
+    # 저가 / 신규
+    "SENT", "DEEP", "MOVE", "ZK", "ZORA",
+    "CPOOL", "BLUR", "POKT", "BOUNTY",
+    "MOCA", "STRAX",
+
+    # 초저가
+    "FCT2", "PLUME", "SOPH", "META", "NOM",
+    "DKA", "DOOD", "QKC", "LINEA", "BLAST"
+    ]
+
+    MAX_WORKERS = 10
 
 # ===============================
 # 가격 조회
