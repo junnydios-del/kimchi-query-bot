@@ -2,51 +2,50 @@ import os
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# ===============================
-# 텔레그램 설정 (기존과 동일)
-# ===============================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 if not BOT_TOKEN or not CHAT_ID:
     raise ValueError("BOT_TOKEN 또는 CHAT_ID 환경변수가 없습니다.")
 
-# ===============================
-# 수동 조회할 코인 목록 (30개)
-# ===============================
 COINS = [
-    # 메이저 / 스테이블
     "USDT", "USDC",
-
-    # 상단에 언급된 코인들
     "FLUID", "ZRO", "VANA", "AXS", "ENSO", "IP",
     "BARD", "ORCA", "TON",
-
-    # 추천/중형
     "AQT", "BERA", "AKT", "KAITO", "TRX", "CBK",
     "JTO", "LA", "MET", "AVNT", "RED",
-
-    # 중소형
     "SOMI", "OPEN", "BREV", "CTC", "ME",
-    "SUPER", "TAIKO", "ZKP", "SAFE", "XPL",
-    "ZBT",
-
-    # 소형
+    "SUPER", "TAIKO", "ZKP", "SAFE", "XPL", "ZBT",
     "ONG", "IN", "KERNEL", "WCT", "KAIA",
     "ZETA", "ARDR", "PYTH", "YGG", "CHZ", "MOC",
-
-    # 저가 / 신규
     "SENT", "DEEP", "MOVE", "ZK", "ZORA",
     "CPOOL", "BLUR", "POKT", "BOUNTY",
     "MOCA", "STRAX",
-
-    # 초저가
     "FCT2", "PLUME", "SOPH", "META", "NOM",
     "DKA", "DOOD", "QKC", "LINEA", "BLAST"
-    ]
+]
 
-    MAX_WORKERS = 10
+MAX_WORKERS = 5
+TIMEOUT = 3
 
+session = requests.Session()
+
+def get_upbit(symbol):
+    r = session.get(
+        "https://api.upbit.com/v1/ticker",
+        params={"markets": f"KRW-{symbol}"},
+        timeout=TIMEOUT
+    )
+    r.raise_for_status()
+    return r.json()[0]["trade_price"]
+
+def get_bithumb(symbol):
+    r = session.get(
+        f"https://api.bithumb.com/public/ticker/{symbol}_KRW",
+        timeout=TIMEOUT
+    )
+    r.raise_for_status()
+    return float(r.json()["data"]["closing_price"])
 # ===============================
 # 가격 조회
 # ===============================
