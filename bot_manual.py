@@ -22,7 +22,7 @@ COINS = [
     "CPOOL", "BLUR", "POKT", "BOUNTY",
     "MOCA", "STRAX",
     "FCT2", "PLUME", "SOPH", "META", "NOM",
-    "DKA", "DOOD", "QKC", "LINEA", "BLAST"
+    "DKA", "DOOD", "QKC", "LINEA", "BLAST", "mon"
 ]
 
 MAX_WORKERS = 5
