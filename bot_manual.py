@@ -21,7 +21,7 @@ COINS = [
     "SENT", "DEEP", "MOVE", "ZK", "ZORA",
     "CPOOL", "BLUR", "POKT", "BOUNTY",
     "MOCA", "STRAX",
-    "FCT2", "PLUME", "SOPH", "META", "NOM",
+    "FCT2", "PLUME", "SOPH", "META", 
     "DKA", "DOOD", "QKC", "LINEA", "BLAST", "mon",
     "T"
 ]
